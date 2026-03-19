@@ -9,7 +9,7 @@ from pathlib import Path
 from asr_qwen import transcribe_audio
 from exporters import write_srt, write_txt
 from extract_audio import ensure_ffmpeg_available, extract_audio
-from postprocess import clean_segments, clean_text
+from postprocess import clean_segments, clean_text, merge_segments_for_srt
 
 
 def parse_args() -> argparse.Namespace:
@@ -102,9 +102,10 @@ def main() -> int:
         cleaned_segments = clean_segments(
             result.get("segments", []), remove_fillers=args.remove_fillers
         )
+        subtitle_segments = merge_segments_for_srt(cleaned_segments)
 
         write_txt(cleaned_text, txt_path)
-        write_srt(cleaned_segments, srt_path)
+        write_srt(subtitle_segments, srt_path)
         srt_text = srt_path.read_text(encoding="utf-8")
 
         if not args.keep_audio and wav_path.exists():
