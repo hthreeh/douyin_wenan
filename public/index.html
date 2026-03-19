@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>抖音文案一键提取</title>
+  <meta name="description" content="输入抖音分享文本，一键提取纯文案和 SRT 字幕。">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page-glow page-glow-left"></div>
+  <div class="page-glow page-glow-right"></div>
+
+  <div class="shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Douyin Transcript Lab</p>
+        <h1>抖音分享链接一键提取文案</h1>
+        <p class="subtitle">粘贴分享文本，自动解析视频、提取语音，并返回纯文案与 SRT 字幕。</p>
+      </div>
+      <div class="health-card">
+        <div>
+          <p class="health-label">运行环境</p>
+          <div id="healthPill" class="health-pill is-loading">正在检查</div>
+        </div>
+        <button id="refreshHealthBtn" class="ghost-btn" type="button">重新检查</button>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="panel panel-input">
+        <div class="panel-head">
+          <h2>输入分享文本</h2>
+          <p>支持直接粘贴抖音复制出来的整段分享文本，也支持短链接。</p>
+        </div>
+
+        <label class="field-label" for="inputText">分享内容</label>
+        <textarea id="inputText" class="text-input" rows="8" maxlength="2000" placeholder="例如：
+7.30 复制打开抖音，看看这个作品 https://v.douyin.com/xxxxxxx/"></textarea>
+
+        <div class="action-row">
+          <button id="submitBtn" class="primary-btn" type="button">
+            <span class="btn-text">开始提取</span>
+            <span class="btn-loading">处理中...</span>
+          </button>
+          <p class="helper-text">任务创建后会自动轮询，不需要重复点击。</p>
+        </div>
+
+        <div id="errorSection" class="notice notice-error" hidden></div>
+      </section>
+
+      <section id="progressSection" class="panel panel-progress" hidden>
+        <div class="panel-head">
+          <h2>任务状态</h2>
+          <p id="jobMetaText">任务尚未开始</p>
+        </div>
+
+        <div class="status-box">
+          <p class="status-caption">当前进度</p>
+          <h3 id="statusText">等待提交</h3>
+          <p id="statusMessage" class="status-message">提交后这里会显示服务端进度。</p>
+        </div>
+
+        <ol class="status-list" id="statusList">
+          <li class="status-item" data-status="queued">已创建任务</li>
+          <li class="status-item" data-status="parsing">解析抖音链接</li>
+          <li class="status-item" data-status="downloading">下载源视频</li>
+          <li class="status-item" data-status="transcribing">提取文案</li>
+          <li class="status-item" data-status="completed">生成完成</li>
+        </ol>
+      </section>
+
+      <section id="resultSection" class="panel panel-result" hidden>
+        <div class="panel-head">
+          <h2>提取结果</h2>
+          <p>结果会同步保存到服务端的任务目录里。</p>
+        </div>
+
+        <div class="result-hero">
+          <div class="cover-shell">
+            <img id="coverImage" class="cover-image" alt="视频封面" hidden>
+            <div id="coverFallback" class="cover-fallback">封面</div>
+          </div>
+          <div class="result-meta">
+            <p class="result-kicker">视频信息</p>
+            <h3 id="titleText">未生成</h3>
+            <div class="result-actions">
+              <button id="copyBtn" class="ghost-btn" type="button">复制文案</button>
+              <a id="txtDownloadLink" class="download-btn" href="#" download>下载 TXT</a>
+              <a id="srtDownloadLink" class="download-btn alt" href="#" download>下载 SRT</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="output-block">
+          <div class="output-head">
+            <h3>纯文案</h3>
+            <span id="transcriptStat" class="output-stat">0 字</span>
+          </div>
+          <textarea id="transcriptOutput" class="output-text" rows="12" readonly></textarea>
+        </div>
+
+        <div class="output-block">
+          <div class="output-head">
+            <h3>SRT 字幕</h3>
+            <span class="output-stat">可直接下载</span>
+          </div>
+          <textarea id="srtOutput" class="output-text output-text-srt" rows="12" readonly></textarea>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
